@@ -10,7 +10,6 @@ require 'json'
 # STEP 3: Include the twilio account SID, auth token and phone number below
 
 # => Log into Twilio and access the account SID, token, and number
-
 #Optimizely Webhook Secret Key (do not store key in this file in a production environment)
 SECRET_KEY = 'H8XKETaMasRpvc_YwTB1fJ7cYU4daf6mkM1fNKkuIxY'
 
@@ -84,17 +83,9 @@ get '/sms' do
         SEINFELD_URI_ENCODED = URI(SEINFELD_URL)
         seinfeld_quote = HTTParty.get(SEINFELD_URI_ENCODED)
         parsed_seinfeld = JSON.parse(seinfeld_quote)
+        
         #Available information quote, author, season, episode, image
-        if(quote)
-            message = parsed_seinfeld['quote']
-        end
-        if(author)
-            message = message + ' - ' + parsed_seinfeld['author'] 
-        end
-        if(character)
-            message = message + ' - ' + parsed_seinfeld['character']
-        end
-
+        message = construct_sms(parsed_seinfeld,quote,author,character)
         puts message
         
         #puts "[SEINFELD] #{parsed_seinfeld['quote']}"
@@ -104,17 +95,10 @@ get '/sms' do
         SIMPSONS_URI_ENCODED = URI(SIMPSONS_URL)
         simpsons_quote = HTTParty.get(SIMPSONS_URI_ENCODED)
         #parsed_simpsons = JSON.parse(simpsons_quote.to_json)
+        
         #Available information quote, character, image, direction
         puts "[SIMPSONS] #{simpsons_quote[0]['quote']}"
-        if(quote)
-            message = simpsons_quote[0]['quote']
-        end
-        if(author)
-            message = message + ' - ' + simpsons_quote[0]['author'] 
-        end
-        if(character)
-            message = message + ' - ' + simpsons_quote[0]['character']
-        end
+        message = construct_sms(simpsons_quote[0],quote,author,character)
         puts message
     else
         message = "default"
@@ -190,3 +174,17 @@ def send_sms body, number
       body: body
     ) 
 end
+
+def construct_sms json, quote, author, character
+    if(quote)
+         message = json['quote']
+     end
+    if(author)
+        message = message + ' - ' + json['author'] 
+    end
+    if(character)
+        message = message + ' - ' + json['character']
+    end
+    return message
+end
+
