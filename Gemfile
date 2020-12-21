@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'sinatra'
+gem 'sinatra', '>= 2.0.2'
 gem 'httparty'
-gem 'twilio-ruby', '~> 5.6.3'
+gem 'twilio-ruby', '~> 5.6.4'
